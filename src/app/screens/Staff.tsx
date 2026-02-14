@@ -1,9 +1,3 @@
- (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
-diff --git a/src/app/screens/Staff.tsx b/src/app/screens/Staff.tsx
-index cf60ac67eb533937d2aeaa90188d07ee3d71f3c4..e9f3c2580c5fb908c67da467d26d48a68b9e935b 100644
---- a/src/app/screens/Staff.tsx
-+++ b/src/app/screens/Staff.tsx
-@@ -1,108 +1,89 @@
 -import { useState } from 'react';
  import { TopHeader } from '../components/TopHeader';
 -import { OVRBadge } from '../components/OVRBadge';
