@@ -1,9 +1,3 @@
- (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
-diff --git a/src/app/screens/StaffMeeting.tsx b/src/app/screens/StaffMeeting.tsx
-index e074a6302e4c27e1f5074f8bbf5cc8a29426fdaa..d2cdbfbc7ca00b74ae2f5c896cac77c2687aee0f 100644
---- a/src/app/screens/StaffMeeting.tsx
-+++ b/src/app/screens/StaffMeeting.tsx
-@@ -1,79 +1,117 @@
  import { useNavigate } from 'react-router';
 -import { useSave } from '../context/SaveProvider';
 +import { useSave, SaveData } from '../context/SaveProvider';
