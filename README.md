@@ -1,7 +1,7 @@
 
-  # UGF_Figma
+  # UGF
 
-  This is a code bundle for UGF_Figma. The original project is available at https://www.figma.com/design/4sVVQ34HDCNOtqtOBIy6pm/UGF_Figma.
+  This is a code bundle for UGF. 
 
   ## Running the code
 
