@@ -1,81 +1,126 @@
+import { useMemo } from 'react';
 import { useNavigate } from 'react-router';
-import { useSave, SaveData } from '../context/SaveProvider';
 import { TopHeader } from '../components/TopHeader';
+import { useSave } from '../context/SaveProvider';
+
+type DraftPhilosophy = 'balanced' | 'best_player_available' | 'trenches' | 'playmakers';
+type FAAggressiveness = 'low' | 'medium' | 'high';
+type ExtensionPriority = 'stars' | 'depth' | 'youth';
+
+type CareerStrategy = {
+  draftPhilosophy: DraftPhilosophy;
+  faAggressiveness: FAAggressiveness;
+  extensionPriority: ExtensionPriority;
+};
+
+function isoNow(): string {
+  return new Date().toISOString();
+}
+
+function withDefaults<T extends object>(value: unknown, defaults: T): T {
+  if (!value || typeof value !== 'object') return defaults;
+  return { ...defaults, ...(value as Partial<T>) };
+}
 
 export function StaffMeeting() {
   const navigate = useNavigate();
   const { save, setSave } = useSave();
 
-  const setCareer = <K extends keyof SaveData['career']>(field: K, value: SaveData['career'][K]) => {
-    setSave((prev) => ({
-      ...prev,
-      career: {
-        ...prev.career,
-        [field]: value,
-      },
-    }));
+  const defaults: CareerStrategy = useMemo(
+    () => ({
+      draftPhilosophy: 'balanced',
+      faAggressiveness: 'medium',
+      extensionPriority: 'stars',
+    }),
+    []
+  );
+
+  const currentCareer = withDefaults((save as any).career, defaults);
+
+  const setCareerField = <K extends keyof CareerStrategy>(field: K, value: CareerStrategy[K]) => {
+    setSave((prev: any) => {
+      const prevCareer = withDefaults(prev.career, defaults);
+      return {
+        ...prev,
+        career: {
+          ...prevCareer,
+          [field]: value,
+        },
+      };
+    });
   };
 
   const completeMeeting = () => {
-    setSave((prev) => ({
-      ...prev,
-      flags: {
-        ...prev.flags,
-        orgMeetingDone: true,
-      },
-      news: [
-        {
-          id: `news_org_meeting_${Date.now()}`,
-          headline: 'Organizational Strategy Set',
-          description: 'Your front office priorities are locked in for the offseason cycle.',
-          timestamp: 'Just now',
-          cta: 'Advance Timeline',
+    setSave((prev: any) => {
+      const prevFlags = withDefaults(prev.flags, { orgMeetingDone: false });
+      const prevNews = Array.isArray(prev.news) ? prev.news : [];
+
+      return {
+        ...prev,
+        flags: {
+          ...prevFlags,
+          orgMeetingDone: true,
         },
-        ...prev.news,
-      ],
-    }));
+        news: [
+          {
+            id: `news_org_meeting_${Date.now()}`,
+            headline: 'Organizational Strategy Set',
+            description: 'Front office priorities are locked in for the offseason cycle.',
+            timestampISO: isoNow(),
+            ctaRoute: '/', // optional, safe if unused
+          },
+          ...prevNews,
+        ],
+      };
+    });
+
     navigate('/');
   };
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--bg-primary)' }}>
       <TopHeader title="Strategy Meeting" />
+
       <div className="p-4 flex flex-col gap-4">
         <Picker
           label="Draft Philosophy"
-          value={save.career.draftPhilosophy}
+          value={currentCareer.draftPhilosophy}
           options={[
             ['balanced', 'Balanced'],
             ['best_player_available', 'Best Player Available'],
             ['trenches', 'Build the Trenches'],
             ['playmakers', 'Prioritize Playmakers'],
           ]}
-          onSelect={(value) => setCareer('draftPhilosophy', value as SaveData['career']['draftPhilosophy'])}
+          onSelect={(v) => setCareerField('draftPhilosophy', v as DraftPhilosophy)}
         />
 
         <Picker
           label="FA Aggressiveness"
-          value={save.career.faAggressiveness}
+          value={currentCareer.faAggressiveness}
           options={[
             ['low', 'Low'],
             ['medium', 'Medium'],
             ['high', 'High'],
           ]}
-          onSelect={(value) => setCareer('faAggressiveness', value as SaveData['career']['faAggressiveness'])}
+          onSelect={(v) => setCareerField('faAggressiveness', v as FAAggressiveness)}
         />
 
         <Picker
           label="Extension Priority"
-          value={save.career.extensionPriority}
+          value={currentCareer.extensionPriority}
           options={[
             ['stars', 'Retain Stars'],
             ['depth', 'Depth First'],
             ['youth', 'Prioritize Youth'],
           ]}
-          onSelect={(value) => setCareer('extensionPriority', value as SaveData['career']['extensionPriority'])}
+          onSelect={(v) => setCareerField('extensionPriority', v as ExtensionPriority)}
         />
 
-        <button onClick={completeMeeting} className="w-full py-3 rounded-xl text-white font-semibold" style={{ backgroundColor: 'var(--accent-primary)' }}>
+        <button
+          onClick={completeMeeting}
+          className="w-full py-3 rounded-xl text-white font-semibold"
+          style={{ backgroundColor: 'var(--accent-primary)' }}
+        >
           Complete Strategy Meeting
         </button>
       </div>

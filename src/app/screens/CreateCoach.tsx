@@ -35,7 +35,7 @@ export function CreateCoach() {
       league: {
         season: 2026,
         week: 1,
-        phase: 'offseason',
+       phase: 'offseason',
       },
       onboarding: {
         interviewsCompleted: [],
