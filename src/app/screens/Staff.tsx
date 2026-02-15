@@ -1,8 +1,6 @@
 import { useMemo, useState } from 'react';
 import { TopHeader } from '../components/TopHeader';
-import { OVRBadge } from '../components/OVRBadge';
 import { useSave } from '../context/SaveProvider';
-import { getStaff, normalizeRole, Personnel } from '../data/leagueAdapter';
 
 const TABS = ['Staff', 'Openings', 'Free Agents'] as const;
 type Tab = (typeof TABS)[number];
@@ -83,7 +81,7 @@ export function Staff() {
               ))
             )}
           </div>
-        )}
+        ))}
 
         {/* Free Agents */}
         {activeTab === 'Free Agents' && (
